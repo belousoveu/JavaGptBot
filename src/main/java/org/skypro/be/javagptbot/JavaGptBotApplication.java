@@ -1,4 +1,4 @@
-package org.example.javagptbot;
+package org.skypro.be.javagptbot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

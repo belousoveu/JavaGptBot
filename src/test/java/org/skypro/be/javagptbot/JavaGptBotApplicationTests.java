@@ -1,4 +1,4 @@
-package org.example.javagptbot;
+package org.skypro.be.javagptbot;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
