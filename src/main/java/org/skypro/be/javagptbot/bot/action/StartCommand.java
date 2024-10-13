@@ -1,14 +1,15 @@
 package org.skypro.be.javagptbot.bot.action;
 
+import lombok.Data;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
+@Component
+@Data
 public class StartCommand implements BotAction {
 
-    private final long chatId;
-
-    public StartCommand(long chatId) {
-        this.chatId = chatId;
-    }
+    private long chatId;
 
     @Override
     public SendMessage getAnswer() {
@@ -18,6 +19,16 @@ public class StartCommand implements BotAction {
                 .text(START_MESSAGE)
                 .build();
 
+    }
+
+    @Override
+    public boolean canHandle(Update update) {
+        return update.hasMessage() && update.getMessage().getText().startsWith("/start");
+    }
+
+    @Override
+    public String getName() {
+        return "StartCommand";
     }
 
 

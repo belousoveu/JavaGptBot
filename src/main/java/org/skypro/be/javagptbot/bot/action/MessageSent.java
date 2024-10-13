@@ -1,14 +1,15 @@
 package org.skypro.be.javagptbot.bot.action;
 
+import lombok.Data;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
-public class MessageSent implements BotAction{
+@Component
+@Data
+public class MessageSent implements BotAction {
 
-    private final long chatId;
-
-    public MessageSent(long chatId) {
-        this.chatId = chatId;
-    }
+    private long chatId;
 
     @Override
     public SendMessage getAnswer() {
@@ -16,6 +17,16 @@ public class MessageSent implements BotAction{
                 .chatId(chatId)
                 .text(OTHER_MESSAGE)
                 .build();
+    }
+
+    @Override
+    public boolean canHandle(Update update) {
+        return true;
+    }
+
+    @Override
+    public String getName() {
+        return "MessageSent";
     }
 
     private static final String OTHER_MESSAGE = """

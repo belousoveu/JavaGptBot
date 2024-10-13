@@ -1,42 +1,105 @@
 package org.skypro.be.javagptbot.github;
 
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import org.kohsuke.github.*;
+import org.skypro.be.javagptbot.bot.exception.GithubAuthenticationException;
+import org.skypro.be.javagptbot.bot.exception.InvalidPullRequestLinkException;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.InputStream;
+import java.util.*;
 
 @Service
 @Slf4j
 public class GithubService {
 
-    private static final String GITHUB_API_URL = "https://api.github.com";
-    private final OkHttpClient client = new OkHttpClient();
+    private final String githubToken = System.getenv("GITHUB_TOKEN");
+    private String owner;
+    private String repo;
+    private int pullNumber;
 
-    public Map<String, String> getProjectFiles(String pullRequestLink) {
-        Map<String, String> files = new HashMap<String, String>();
+    public Map<String, String> getProjectFiles(String pullRequestLink) throws IOException {
+        Map<String, String> files = new HashMap<>();
+        Set<String> renamedFiles;
+        setRepoDetails(pullRequestLink);
 
-        String apiUrl = getPullRequestApiUrl(pullRequestLink);
+        try {
+            GitHub github = new GitHubBuilder().withOAuthToken(githubToken).build();
+            GHRepository repository = github.getRepository(owner + "/" + repo);
+            GHPullRequest pullRequest = repository.getPullRequest(pullNumber);
+            if (pullRequest == null || pullRequest.getState().equals(GHIssueState.CLOSED)) {
+                throw new InvalidPullRequestLinkException(pullRequestLink);
+            }
 
-        Request request = new Request.Builder().url(apiUrl).build();
+            renamedFiles = detectRenamedFiles(pullRequest);
+            readFilesInBranch(repository, repository.getBranch(pullRequest.getBase().getRef()), files, renamedFiles);
+            readFilesInBranch(repository, repository.getBranch(pullRequest.getHead().getRef()), files, renamedFiles);
 
+            //TODO Удалить позже
+//            renamedFiles.forEach(System.out::println);
 
+//            for (Map.Entry<String, String> entry : files.entrySet()) {
+//                System.out.println("Путь: " + entry.getKey());
+//                System.out.println("Содержимое: " + entry.getValue());
+//            }
 
+        } catch (HttpException e) {
+            log.error("Authentication failed", e);
+            throw new GithubAuthenticationException("GitHub Authentication failed. Contact the developer", e);
+        } catch (IOException e) {
+            log.error("Can't get files from GitHub", e);
+            throw new InvalidPullRequestLinkException(pullRequestLink, e);
+        }
         return files;
     }
 
-    private String getPullRequestApiUrl(String pullRequestLink) {
+    private void readFilesInBranch(GHRepository repository, GHBranch branch,
+                                   Map<String, String> files, Set<String> renamedFiles) throws IOException {
+        readFilesInDirectory(repository, repository.getDirectoryContent("", branch.getName()), branch, files, renamedFiles);
+    }
+
+    private void readFilesInDirectory(GHRepository repository, List<GHContent> directoryContent,
+                                      GHBranch branch, Map<String, String> files, Set<String> renamedFiles) throws IOException {
+        for (GHContent content : directoryContent) {
+            if (content.isDirectory()) {
+                readFilesInDirectory(repository, repository.getDirectoryContent(content.getPath(),
+                        branch.getName()), branch, files, renamedFiles);
+            } else {
+                if (content.getName().endsWith(".java") && !renamedFiles.contains(content.getPath())) {
+                    files.put(content.getPath(), convertToString(content.read()));
+                }
+            }
+        }
+    }
+
+    private static Set<String> detectRenamedFiles(GHPullRequest pullRequest) throws IOException {
+        Set<String> result = new HashSet<>();
+        for (GHPullRequestFileDetail fileDetail : pullRequest.listFiles().toList()) {
+            if (fileDetail.getStatus().equals("renamed")) {
+                result.add(fileDetail.getPreviousFilename());
+            }
+            if (fileDetail.getStatus().equals("removed")) {
+                result.add(fileDetail.getFilename());
+            }
+        }
+        return result;
+    }
+
+    private String convertToString(InputStream read) {
+        Scanner s = new Scanner(read).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
+
+    private void setRepoDetails(String pullRequestLink) throws IOException {
         String[] parts = pullRequestLink.split("/");
+        owner = parts[3];
+        repo = parts[4];
         try {
-            return String.format("%s/repos/%s/%s/pulls/%d",
-                    GITHUB_API_URL, parts[3], parts[4], Integer.parseInt(parts[5]));
-        } catch (NumberFormatException e) {
+            pullNumber = Integer.parseInt(parts[6]);
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
             log.error("Invalid pull request link: {}", pullRequestLink, e);
-            throw new RuntimeException("Invalid pull request link: " + pullRequestLink);
+            throw new InvalidPullRequestLinkException(pullRequestLink);
         }
     }
 }

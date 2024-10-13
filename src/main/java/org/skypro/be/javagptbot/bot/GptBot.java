@@ -3,7 +3,6 @@ package org.skypro.be.javagptbot.bot;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.skypro.be.javagptbot.BotService;
-import org.skypro.be.javagptbot.bot.action.BotAction;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.BotSession;
@@ -27,11 +26,12 @@ public class GptBot implements SpringLongPollingBot, LongPollingSingleThreadUpda
 
     private final TelegramClient client;
     private final BotService botService;
-    private BotAction botAction;
+    private final BotActionFactory botActionFactory;
 
 
-    public GptBot(BotService botService) {
+    public GptBot(BotService botService, BotActionFactory botActionFactory) {
         this.botService = botService;
+        this.botActionFactory = botActionFactory;
         this.client = new OkHttpTelegramClient(getBotToken());
     }
 
@@ -61,14 +61,13 @@ public class GptBot implements SpringLongPollingBot, LongPollingSingleThreadUpda
 
     @Override
     public void consume(Update update) {
-        botAction = BotActionFactory.create(update);
-        SendMessage message = botAction.getAnswer();
+        SendMessage message = botActionFactory.getAction(update).getAnswer();
 
-            try {
-                client.execute(message);
-            } catch (TelegramApiException e) {
-                log.error(e.getMessage());
-            }
+        try {
+            client.execute(message);
+        } catch (TelegramApiException e) {
+            log.error(e.getMessage());
+        }
 
     }
 
