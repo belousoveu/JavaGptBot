@@ -1,20 +1,25 @@
 package org.skypro.be.javagptbot.bot.action;
 
 import lombok.Data;
+import org.skypro.be.javagptbot.bot.UserDialog;
+import org.skypro.be.javagptbot.gigachat.GigaChatApi;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
-@Data
 public class MessageSent implements BotAction {
 
-    private long chatId;
+    @Autowired
+    private GigaChatApi gigaChatApi; //TODO позже удалить
+
 
     @Override
-    public SendMessage getAnswer() {
+    public SendMessage getAnswer(UserDialog dialog) {
+        System.out.println("gigaChatApi.getToken() = " + gigaChatApi.getToken()); //TODO позже удалить
         return SendMessage.builder()
-                .chatId(chatId)
+                .chatId(dialog.getChatId())
                 .text(OTHER_MESSAGE)
                 .build();
     }

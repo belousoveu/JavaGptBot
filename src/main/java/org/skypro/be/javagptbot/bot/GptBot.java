@@ -2,7 +2,6 @@ package org.skypro.be.javagptbot.bot;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.skypro.be.javagptbot.BotService;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.BotSession;
@@ -17,6 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,13 +25,14 @@ import java.util.List;
 public class GptBot implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
 
     private final TelegramClient client;
-    private final BotService botService;
-    private final BotActionFactory botActionFactory;
+    private final DialogService dialogService;
+    private final DialogManager dialogManager;
+    private boolean blocked = false;
 
 
-    public GptBot(BotService botService, BotActionFactory botActionFactory) {
-        this.botService = botService;
-        this.botActionFactory = botActionFactory;
+    public GptBot(DialogService dialogService, DialogManager dialogManager) {
+        this.dialogService = dialogService;
+        this.dialogManager = dialogManager;
         this.client = new OkHttpTelegramClient(getBotToken());
     }
 
@@ -61,14 +62,21 @@ public class GptBot implements SpringLongPollingBot, LongPollingSingleThreadUpda
 
     @Override
     public void consume(Update update) {
-        SendMessage message = botActionFactory.getAction(update).getAnswer();
-
-        try {
-            client.execute(message);
-        } catch (TelegramApiException e) {
-            log.error(e.getMessage());
+        long userId = dialogService.getUserId(update);
+        UserDialog dialog = dialogManager.getDialog(userId);
+        if (!dialog.isBlocked()) {
+            dialog.setBlocked(true);
+            try {
+                SendMessage message = dialogManager.getAction(update).getAnswer(dialog);
+                client.execute(message);
+            } catch (TelegramApiException  e) {
+                log.error(e.getMessage());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            } finally {
+                dialog.setBlocked(false);
+            }
         }
-
     }
 
     @AfterBotRegistration

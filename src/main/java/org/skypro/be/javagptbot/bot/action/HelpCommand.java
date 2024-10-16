@@ -1,20 +1,19 @@
 package org.skypro.be.javagptbot.bot.action;
 
 import lombok.Data;
+import org.skypro.be.javagptbot.bot.UserDialog;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
-@Data
 public class HelpCommand implements BotAction {
 
-    private long chatId;
 
     @Override
-    public SendMessage getAnswer() {
+    public SendMessage getAnswer(UserDialog dialog) {
         return SendMessage.builder()
-                .chatId(chatId)
+                .chatId(dialog.getChatId())
                 .text(HELP_MESSAGE)
                 .build();
     }

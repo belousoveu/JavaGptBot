@@ -2,8 +2,9 @@ package org.skypro.be.javagptbot.github;
 
 import lombok.extern.slf4j.Slf4j;
 import org.kohsuke.github.*;
-import org.skypro.be.javagptbot.bot.exception.GithubAuthenticationException;
-import org.skypro.be.javagptbot.bot.exception.InvalidPullRequestLinkException;
+import org.skypro.be.javagptbot.exception.GithubAuthenticationException;
+import org.skypro.be.javagptbot.exception.InvalidPullRequestLinkException;
+import org.skypro.be.javagptbot.utils.TextUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -67,7 +68,7 @@ public class GithubService {
                         branch.getName()), branch, files, renamedFiles);
             } else {
                 if (content.getName().endsWith(".java") && !renamedFiles.contains(content.getPath())) {
-                    files.put(content.getPath(), convertToString(content.read()));
+                    files.put(content.getPath(), TextUtils.convertToString(content.read()));
                 }
             }
         }
@@ -84,11 +85,6 @@ public class GithubService {
             }
         }
         return result;
-    }
-
-    private String convertToString(InputStream read) {
-        Scanner s = new Scanner(read).useDelimiter("\\A");
-        return s.hasNext() ? s.next() : "";
     }
 
     private void setRepoDetails(String pullRequestLink) throws IOException {

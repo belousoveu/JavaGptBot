@@ -1,4 +1,4 @@
-package org.skypro.be.javagptbot.bot.exception;
+package org.skypro.be.javagptbot.exception;
 
 import java.io.IOException;
 
