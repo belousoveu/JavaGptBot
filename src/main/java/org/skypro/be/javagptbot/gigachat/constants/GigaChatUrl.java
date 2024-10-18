@@ -1,4 +1,9 @@
-package org.skypro.be.javagptbot.gigachat;
+/*
+ * Copyright (c) 2024.
+ *
+ */
+
+package org.skypro.be.javagptbot.gigachat.constants;
 
 public class GigaChatUrl {
     public static final String AUTHORIZATION_URL = "https://ngw.devices.sberbank.ru:9443/api/v2/oauth";

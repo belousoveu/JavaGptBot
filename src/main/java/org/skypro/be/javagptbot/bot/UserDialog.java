@@ -7,7 +7,14 @@ package org.skypro.be.javagptbot.bot;
 
 
 import lombok.Data;
+import org.checkerframework.checker.units.qual.C;
+import org.skypro.be.javagptbot.gigachat.DialogMessage;
+import org.skypro.be.javagptbot.gigachat.constants.GigaChatRole;
+import org.skypro.be.javagptbot.utils.TextUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 
@@ -17,6 +24,7 @@ public class UserDialog {
     private boolean blocked = false;
     private long chatId;
     private Map<String, String> questions;
+    private List<DialogMessage> messages;
 
 
     public UserDialog(long userId) {
@@ -25,5 +33,18 @@ public class UserDialog {
 
     public String getQuestionText(String questionKey) {
         return questions.get(questionKey);
+    }
+
+    public void addMessage(DialogMessage message) {
+        messages.add(message);
+    }
+
+    public void clearMessages() {
+        this.messages = new ArrayList<>();
+        addMessage(new DialogMessage(GigaChatRole.SYSTEM_ROLE, TextUtils.getPrompt("tutor")));
+    }
+
+    public List<DialogMessage> getMessages() {
+        return Collections.unmodifiableList(messages);
     }
 }

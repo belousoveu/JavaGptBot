@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.skypro.be.javagptbot.bot.UserDialog;
 import org.skypro.be.javagptbot.exception.GithubAuthenticationException;
 import org.skypro.be.javagptbot.exception.InvalidPullRequestLinkException;
+import org.skypro.be.javagptbot.gigachat.DialogMessage;
 import org.skypro.be.javagptbot.gigachat.GigaChatApi;
 import org.skypro.be.javagptbot.github.GithubService;
 import org.skypro.be.javagptbot.utils.TextUtils;
@@ -20,6 +21,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.skypro.be.javagptbot.gigachat.constants.GigaChatRole.ASSISTANT_ROLE;
 
 @Slf4j
 @Component
@@ -40,13 +43,16 @@ public class LinkSent implements BotAction {
         Map<String, String> projectFiles;
         String messageText;
         List<String> questionList = new ArrayList<>();
+        dialog.clearMessages();
         try {
             projectFiles = gitHubService.getProjectFiles(link);
             String queryText = TextUtils.convertToString(projectFiles);
             System.out.println("queryText = " + queryText.length()); // TODO remove
-            messageText = gigaChatApi.sendQuery(queryText);
+            messageText = gigaChatApi.sendPullRequest(TextUtils.getPrompt("task") + "\n" + queryText, dialog);
+            dialog.addMessage(new DialogMessage(ASSISTANT_ROLE, messageText));
             System.out.println("messageText.length() = " + messageText.length()); // TODO remove
             questionList = gigaChatApi.getQuestions(messageText);
+            questionList.forEach(System.out::println); // TODO remove
 
         } catch (InvalidPullRequestLinkException | GithubAuthenticationException e) {
             messageText = e.getMessage();
@@ -56,13 +62,14 @@ public class LinkSent implements BotAction {
         }
         InlineKeyboardMarkup buttons = convertToInlineKeyboardMarkup(questionList, dialog);
 
-
         return SendMessage.builder()
                 .chatId(dialog.getChatId())
                 .text(messageText)
+//                .parseMode("Markdown")
                 .replyMarkup(buttons)
                 .build();
     }
+
 
     @Override
     public boolean canHandle(Update update) {
@@ -78,6 +85,16 @@ public class LinkSent implements BotAction {
     @Override
     public String getName() {
         return "LinkSent";
+    }
+
+    @Override
+    public boolean isLongOperation() {
+        return true;
+    }
+
+    @Override
+    public String getLongOperationMessage() {
+        return "Пожалуйста подождите... Изучаю проект и подготавливаю ответ.";
     }
 
     private InlineKeyboardMarkup convertToInlineKeyboardMarkup(List<String> questionList, UserDialog dialog) {

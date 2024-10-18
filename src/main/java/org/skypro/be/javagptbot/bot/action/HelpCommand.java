@@ -28,6 +28,16 @@ public class HelpCommand implements BotAction {
         return "HelpCommand";
     }
 
+    @Override
+    public boolean isLongOperation() {
+        return false;
+    }
+
+    @Override
+    public String getLongOperationMessage() {
+        return "";
+    }
+
     private static final String HELP_MESSAGE = """
              Для того чтобы воспользоваться моей помощью пришлите
              ссылку на пулл-реквест в репозитории проекта.

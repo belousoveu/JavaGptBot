@@ -2,6 +2,9 @@ package org.skypro.be.javagptbot.bot.action;
 
 import lombok.Data;
 import org.skypro.be.javagptbot.bot.UserDialog;
+import org.skypro.be.javagptbot.gigachat.GigaChatApi;
+import org.skypro.be.javagptbot.utils.TextUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -10,15 +13,21 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Data
 public class ButtonClick implements BotAction {
 
+    private final GigaChatApi gigaChatApi;
     private String questionKey;
+
+    public ButtonClick(GigaChatApi gigaChatApi) {
+        this.gigaChatApi = gigaChatApi;
+    }
 
     @Override
     public SendMessage getAnswer(UserDialog dialog) {
         String question = dialog.getQuestionText(questionKey);
-        System.out.println("question = " + question); //TODO remove
+        String messageText = gigaChatApi.sendQuestion(TextUtils.getPrompt("question") + "\n" + question, dialog);
         return SendMessage.builder()
                 .chatId(dialog.getChatId())
-                .text("Нажатие кнопки")
+                .text(messageText)
+//                .parseMode("Markdown")
                 .build();
     }
 
@@ -33,5 +42,15 @@ public class ButtonClick implements BotAction {
     @Override
     public String getName() {
         return "ButtonClick";
+    }
+
+    @Override
+    public boolean isLongOperation() {
+        return true;
+    }
+
+    @Override
+    public String getLongOperationMessage() {
+        return "Подождите пожалуйста... Подготавливаю ответ.";
     }
 }

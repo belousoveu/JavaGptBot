@@ -10,4 +10,8 @@ public interface BotAction {
     boolean canHandle(Update update);
 
     String getName();
+
+    boolean isLongOperation();
+
+    String getLongOperationMessage();
 }

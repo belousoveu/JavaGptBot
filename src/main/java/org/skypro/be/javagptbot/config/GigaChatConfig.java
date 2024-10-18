@@ -8,6 +8,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class GigaChatConfig {
@@ -55,7 +56,9 @@ public class GigaChatConfig {
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
             builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
             builder.hostnameVerifier((hostname, session) -> true);
-
+            builder.connectTimeout(180, TimeUnit.SECONDS);
+            builder.readTimeout(180, TimeUnit.SECONDS);
+            builder.writeTimeout(180, TimeUnit.SECONDS);
             return builder.build();
         } catch (Exception e) {
             throw new RuntimeException(e);

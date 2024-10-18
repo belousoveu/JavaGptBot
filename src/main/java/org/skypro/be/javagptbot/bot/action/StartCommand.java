@@ -32,6 +32,16 @@ public class StartCommand implements BotAction {
         return "StartCommand";
     }
 
+    @Override
+    public boolean isLongOperation() {
+        return false;
+    }
+
+    @Override
+    public String getLongOperationMessage() {
+        return "";
+    }
+
 
     private static final String START_MESSAGE = """
             Привет! Я бот, который может проанализировать проект на Java

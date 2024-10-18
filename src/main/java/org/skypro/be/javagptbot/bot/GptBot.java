@@ -2,6 +2,7 @@ package org.skypro.be.javagptbot.bot;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.skypro.be.javagptbot.bot.action.BotAction;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.BotSession;
@@ -11,12 +12,13 @@ import org.telegram.telegrambots.longpolling.starter.SpringLongPollingBot;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
+import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +29,6 @@ public class GptBot implements SpringLongPollingBot, LongPollingSingleThreadUpda
     private final TelegramClient client;
     private final DialogService dialogService;
     private final DialogManager dialogManager;
-    private boolean blocked = false;
 
 
     public GptBot(DialogService dialogService, DialogManager dialogManager) {
@@ -66,17 +67,39 @@ public class GptBot implements SpringLongPollingBot, LongPollingSingleThreadUpda
         UserDialog dialog = dialogManager.getDialog(userId);
         if (!dialog.isBlocked()) {
             dialog.setBlocked(true);
+            BotAction currentAction = dialogManager.getAction(update);
             try {
-                SendMessage message = dialogManager.getAction(update).getAnswer(dialog);
-                client.execute(message);
-            } catch (TelegramApiException  e) {
+                Message tempMessage = null;
+                if (currentAction.isLongOperation()) {
+                    tempMessage = sendTextMessage(currentAction.getLongOperationMessage(), dialog.getChatId());
+                }
+                SendMessage message = currentAction.getAnswer(dialog);
+                List<SendMessage> messages = dialogService.getMessages(message);
+                if (tempMessage != null) {
+                    deleteMessage(tempMessage);
+                }
+                for (SendMessage msg : messages) {
+                    client.execute(msg);
+                }
+            } catch (TelegramApiException e) {
                 log.error(e.getMessage());
             } catch (Exception e) {
+                log.error(e.getMessage());
                 throw new RuntimeException(e);
             } finally {
                 dialog.setBlocked(false);
             }
         }
+    }
+
+    private Boolean deleteMessage(Message tempMessage) throws TelegramApiException {
+        DeleteMessage deleteMessage = DeleteMessage.builder().chatId(tempMessage.getChatId()).messageId(tempMessage.getMessageId()).build();
+        return client.execute(deleteMessage);
+    }
+
+    private Message sendTextMessage(String s, long chatId) throws TelegramApiException {
+        SendMessage message = SendMessage.builder().text(s).chatId(chatId).build();
+        return client.execute(message);
     }
 
     @AfterBotRegistration

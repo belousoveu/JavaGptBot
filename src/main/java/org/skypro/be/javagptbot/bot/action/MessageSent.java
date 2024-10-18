@@ -34,6 +34,16 @@ public class MessageSent implements BotAction {
         return "MessageSent";
     }
 
+    @Override
+    public boolean isLongOperation() {
+        return false;
+    }
+
+    @Override
+    public String getLongOperationMessage() {
+        return "";
+    }
+
     private static final String OTHER_MESSAGE = """
             Извините, но тут я ничем не могу помочь.
             Перечитайте еще раз помощь - /help"

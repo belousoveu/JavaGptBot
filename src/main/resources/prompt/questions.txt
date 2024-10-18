@@ -1,0 +1,2 @@
+Analyze the response below and formulate 2 to 4 questions related to OOP principles, clean code, SOLID, YAGNI, KISS, DRY, and design patterns. The answer should contain only numbered questions, with a maximum of 4 questions.
+The response must be in Russian.

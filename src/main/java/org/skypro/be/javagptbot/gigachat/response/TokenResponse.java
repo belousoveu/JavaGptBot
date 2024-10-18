@@ -5,23 +5,17 @@
 
 package org.skypro.be.javagptbot.gigachat.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class TokenResponse {
-    private String access_token;
-    private long expires_at;
 
-    public String getAccessToken() {
-        return access_token;
-    }
+    @JsonProperty("access_token")
+    private String accessToken;
+    @JsonProperty("expires_at")
+    private long expiresAt;
 
-    public void setAccessToken(String accessToken) {
-        this.access_token = accessToken;
-    }
-
-    public long getExpiresAt() {
-        return expires_at;
-    }
-
-    public void setExpiresAt(long expiresAt) {
-        this.expires_at = expiresAt;
-    }
 }

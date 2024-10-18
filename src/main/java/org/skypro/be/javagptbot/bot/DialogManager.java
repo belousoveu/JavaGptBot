@@ -1,11 +1,8 @@
 package org.skypro.be.javagptbot.bot;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.skypro.be.javagptbot.bot.action.BotAction;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.util.List;
 import java.util.Map;
@@ -14,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class DialogManager {
 
-    private final Map<Long,UserDialog> dialogs= new ConcurrentHashMap<>();
+    private final Map<Long, UserDialog> dialogs = new ConcurrentHashMap<>();
     private final List<BotAction> actions;
     private final DialogService dialogService;
 
@@ -25,7 +22,7 @@ public class DialogManager {
     }
 
     public UserDialog getDialog(long userId) {
-        return  dialogs.computeIfAbsent(userId, k -> new UserDialog(userId));
+        return dialogs.computeIfAbsent(userId, k -> new UserDialog(userId));
     }
 
     public BotAction getAction(Update update) {
