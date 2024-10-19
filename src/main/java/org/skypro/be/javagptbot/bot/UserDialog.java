@@ -7,8 +7,7 @@ package org.skypro.be.javagptbot.bot;
 
 
 import lombok.Data;
-import org.checkerframework.checker.units.qual.C;
-import org.skypro.be.javagptbot.gigachat.DialogMessage;
+import org.skypro.be.javagptbot.gigachat.request.DialogMessage;
 import org.skypro.be.javagptbot.gigachat.constants.GigaChatRole;
 import org.skypro.be.javagptbot.utils.TextUtils;
 

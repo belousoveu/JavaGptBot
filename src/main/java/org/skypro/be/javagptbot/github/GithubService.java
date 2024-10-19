@@ -2,13 +2,12 @@ package org.skypro.be.javagptbot.github;
 
 import lombok.extern.slf4j.Slf4j;
 import org.kohsuke.github.*;
-import org.skypro.be.javagptbot.exception.GithubAuthenticationException;
-import org.skypro.be.javagptbot.exception.InvalidPullRequestLinkException;
+import org.skypro.be.javagptbot.github.exception.GithubAuthenticationException;
+import org.skypro.be.javagptbot.github.exception.InvalidPullRequestLinkException;
 import org.skypro.be.javagptbot.utils.TextUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
 @Service
@@ -36,14 +35,6 @@ public class GithubService {
             renamedFiles = detectRenamedFiles(pullRequest);
             readFilesInBranch(repository, repository.getBranch(pullRequest.getBase().getRef()), files, renamedFiles);
             readFilesInBranch(repository, repository.getBranch(pullRequest.getHead().getRef()), files, renamedFiles);
-
-            //TODO Удалить позже
-//            renamedFiles.forEach(System.out::println);
-
-//            for (Map.Entry<String, String> entry : files.entrySet()) {
-//                System.out.println("Путь: " + entry.getKey());
-//                System.out.println("Содержимое: " + entry.getValue());
-//            }
 
         } catch (HttpException e) {
             log.error("Authentication failed", e);

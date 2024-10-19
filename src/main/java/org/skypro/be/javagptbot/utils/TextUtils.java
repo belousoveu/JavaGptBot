@@ -43,7 +43,6 @@ public class TextUtils {
 
     public static String getPrompt(String prompt) {
         String fileName = PROMPTS_PATH + prompt + ".txt";
-        System.out.println("fileName = " + fileName);
         try {
             String content = Files.readString(Paths.get(fileName));
             return content.replace("\\R", " ");
@@ -77,12 +76,12 @@ public class TextUtils {
 
         //text = escapeUnbalancedMarkdown(text);
 
-       // text = escapeInvalidMarkdownElements(text);
+        // text = escapeInvalidMarkdownElements(text);
 
-        return text;
-//                .replace("**", "");
+        return text.replace("**", "");
     }
 
+    //TODO Переписать для корректной обработки Markdown разметки
     private static String escapeUnbalancedMarkdown(String text) {
         String[] markdownSymbols = {"\\*", "\\_", "`", "\\[", "\\]"};
         for (String symbol : markdownSymbols) {
@@ -99,6 +98,7 @@ public class TextUtils {
         return text;
     }
 
+    //TODO Переписать для корректной обработки Markdown разметки
     private static String escapeInvalidMarkdownElements(String text) {
         String[] markdownPatterns = {
                 "\\*\\*[^\\*]+\\*\\*", // Жирный текст
@@ -138,7 +138,6 @@ public class TextUtils {
             text = text.replaceAll(symbol, "\\\\" + symbol.substring(1));
         }
         return text;
-
     }
 
     public static List<String> getQuestionsList(String answer) {

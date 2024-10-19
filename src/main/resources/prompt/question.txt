@@ -1,2 +1,2 @@
-Provide a detailed answer to the question, applying it to the previously presented project.
-The response must be in Russian.
+Важно: ответ должен быть на русском языке.
+Предоставьте подробный ответ на вопрос, применяя его к ранее представленному проекту.

@@ -1,11 +1,9 @@
 package org.skypro.be.javagptbot.bot.action;
 
-import lombok.Data;
 import org.skypro.be.javagptbot.bot.UserDialog;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
 
 @Component
 public class StartCommand implements BotAction {
@@ -44,10 +42,9 @@ public class StartCommand implements BotAction {
 
 
     private static final String START_MESSAGE = """
-            Привет! Я бот, который может проанализировать проект на Java
-            и оценить его на предмет соблюдения принципов ООП, Чистого кода,
-            SOLID, KISS, DRY, YAGNI. Проверить правильность применения
-            основных паттернов проектирования.
-            А также предложить варианты улучшения проекта.
+            Эй, народ! Я бот, который может заценить ваш Java проект. 
+            Проверю, насколько он в теме с ООП, чистым кодом, SOLID, KISS, DRY и YAGNI. 
+            Также гляну, как используются паттерны проектирования. 
+            И, конечно, подкину идеи для прокачки проекта. Готов? Погнали!
             """;
 }

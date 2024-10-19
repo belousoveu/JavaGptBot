@@ -39,9 +39,10 @@ public class GptBot implements SpringLongPollingBot, LongPollingSingleThreadUpda
 
     @PostConstruct
     public void setBotCommands() {
+        //TODO вынести инициализацию команд в отдельный класс
         List<BotCommand> commands = new ArrayList<>();
-        commands.add(new BotCommand("start", "Запуск бота"));
-        commands.add(new BotCommand("help", "Помощь по работе бота"));
+        commands.add(new BotCommand("start", "Начало работы с ботом"));
+        commands.add(new BotCommand("help", "Помощь по работе с ботом"));
 
         try {
             client.execute(new SetMyCommands(commands));

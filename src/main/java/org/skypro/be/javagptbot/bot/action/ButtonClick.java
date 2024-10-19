@@ -4,7 +4,6 @@ import lombok.Data;
 import org.skypro.be.javagptbot.bot.UserDialog;
 import org.skypro.be.javagptbot.gigachat.GigaChatApi;
 import org.skypro.be.javagptbot.utils.TextUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -27,7 +26,7 @@ public class ButtonClick implements BotAction {
         return SendMessage.builder()
                 .chatId(dialog.getChatId())
                 .text(messageText)
-//                .parseMode("Markdown")
+                //TODO разобраться с ошибкой парсинга -   .parseMode("Markdown")
                 .build();
     }
 
@@ -51,6 +50,6 @@ public class ButtonClick implements BotAction {
 
     @Override
     public String getLongOperationMessage() {
-        return "Подождите пожалуйста... Подготавливаю ответ.";
+        return "Подождите чутка... Сейчас замучу ответ!";
     }
 }

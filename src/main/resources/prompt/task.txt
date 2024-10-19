@@ -1,8 +1,10 @@
-Review the code of the following project based on these criteria:
-Adherence to OOP principles and "clean code" practices
-Compliance with SOLID, KISS, YAGNI, and DRY principles
-Correct application of design patterns
-Presence of tests and overall test coverage of the project
-Identify errors and inaccuracies, and provide recommendations for correction. Suggest ways to improve the project by applying design patterns and using OOP principles.
-The response should be as concise as possible and written in Russian. Providing examples of improved or corrected code from the project is strictly prohibited.
-The response must be in Russian.
+Проанализируй код следующего проекта по следующим критериям:
+- Соблюдение принципов ООП и практик "чистого кода"
+- Соответствие принципам SOLID, KISS, YAGNI и DRY
+- Правильное применение паттернов проектирования
+- Наличие тестов и общая покрытие проекта тестами
+В ответе категорически запрещено включать фрагменты кода, примеры кода, или любые другие формы представления кода.
+Вместо этого, предоставьте описание проблемы и возможные пути решения без приведения кода.
+Ответ должен быть максимально кратким и написан на русском языке.
+Примеры улучшенного или исправленного кода проекта строго запрещены.
+Важно: ответ должен быть на русском языке.

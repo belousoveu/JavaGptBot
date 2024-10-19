@@ -3,9 +3,9 @@ package org.skypro.be.javagptbot.bot.action;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.skypro.be.javagptbot.bot.UserDialog;
-import org.skypro.be.javagptbot.exception.GithubAuthenticationException;
-import org.skypro.be.javagptbot.exception.InvalidPullRequestLinkException;
-import org.skypro.be.javagptbot.gigachat.DialogMessage;
+import org.skypro.be.javagptbot.github.exception.GithubAuthenticationException;
+import org.skypro.be.javagptbot.github.exception.InvalidPullRequestLinkException;
+import org.skypro.be.javagptbot.gigachat.request.DialogMessage;
 import org.skypro.be.javagptbot.gigachat.GigaChatApi;
 import org.skypro.be.javagptbot.github.GithubService;
 import org.skypro.be.javagptbot.utils.TextUtils;
@@ -47,12 +47,9 @@ public class LinkSent implements BotAction {
         try {
             projectFiles = gitHubService.getProjectFiles(link);
             String queryText = TextUtils.convertToString(projectFiles);
-            System.out.println("queryText = " + queryText.length()); // TODO remove
             messageText = gigaChatApi.sendPullRequest(TextUtils.getPrompt("task") + "\n" + queryText, dialog);
             dialog.addMessage(new DialogMessage(ASSISTANT_ROLE, messageText));
-            System.out.println("messageText.length() = " + messageText.length()); // TODO remove
             questionList = gigaChatApi.getQuestions(messageText);
-            questionList.forEach(System.out::println); // TODO remove
 
         } catch (InvalidPullRequestLinkException | GithubAuthenticationException e) {
             messageText = e.getMessage();
@@ -65,7 +62,7 @@ public class LinkSent implements BotAction {
         return SendMessage.builder()
                 .chatId(dialog.getChatId())
                 .text(messageText)
-//                .parseMode("Markdown")
+                //TODO разобраться с ошибкой парсинга -   .parseMode("Markdown")
                 .replyMarkup(buttons)
                 .build();
     }
@@ -94,12 +91,12 @@ public class LinkSent implements BotAction {
 
     @Override
     public String getLongOperationMessage() {
-        return "Пожалуйста подождите... Изучаю проект и подготавливаю ответ.";
+        return "Погоди немного... Я сейчас заценю проект и соберу ответ!";
     }
 
     private InlineKeyboardMarkup convertToInlineKeyboardMarkup(List<String> questionList, UserDialog dialog) {
         List<InlineKeyboardRow> result = new ArrayList<>();
-        Map <String, String> questionMap = new HashMap<>();
+        Map<String, String> questionMap = new HashMap<>();
 
         int i = 1;
         for (String question : questionList) {

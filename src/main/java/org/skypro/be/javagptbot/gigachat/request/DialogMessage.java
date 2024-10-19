@@ -3,7 +3,7 @@
  *
  */
 
-package org.skypro.be.javagptbot.gigachat;
+package org.skypro.be.javagptbot.gigachat.request;
 
 import lombok.Data;
 

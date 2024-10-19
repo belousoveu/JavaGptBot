@@ -1,4 +1,9 @@
-package org.skypro.be.javagptbot.exception;
+/*
+ * Copyright (c) 2024.
+ *
+ */
+
+package org.skypro.be.javagptbot.github.exception;
 
 import java.io.IOException;
 

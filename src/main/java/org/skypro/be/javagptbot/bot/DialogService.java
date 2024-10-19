@@ -24,7 +24,7 @@ public class DialogService {
         } else if (update.hasCallbackQuery()) {
             return update.getCallbackQuery().getFrom().getId();
         }
-        throw new IllegalArgumentException("No chat id"); //TODO: класс ошибки
+        throw new IllegalArgumentException("No chat id");
     }
 
     public long getUserId(Update update) {
@@ -33,13 +33,12 @@ public class DialogService {
         } else if (update.hasCallbackQuery()) {
             return update.getCallbackQuery().getFrom().getId();
         }
-        throw new IllegalArgumentException("No user id"); //TODO: класс ошибки
+        throw new IllegalArgumentException("No user id");
     }
 
     public List<SendMessage> getMessages(SendMessage message) {
         String text = message.getText();
         text = TextUtils.correctMarkdownFormat(text);
-        System.out.println("text = " + text);
         List<SendMessage> messages = new ArrayList<>();
         long chatId = Long.parseLong(message.getChatId());
         while (text.length()>=MAX_MESSAGE_LENGTH) {

@@ -11,7 +11,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class GigaChatResponse {
+public class QueryResponse {
 
     private List<Choice> choices;
     private long created;
@@ -24,7 +24,6 @@ public class GigaChatResponse {
         private GptMessage message;
         private int index;
         private String finish_reason;
-
     }
 
 
