@@ -141,6 +141,8 @@ public class TextUtils {
     }
 
     public static List<String> getQuestionsList(String answer) {
-        return Arrays.stream(answer.split("\n")).toList();
+        return Arrays.stream(answer.split("\n"))
+                .filter(line -> !line.trim().isEmpty())
+                .collect(Collectors.toList());
     }
 }
