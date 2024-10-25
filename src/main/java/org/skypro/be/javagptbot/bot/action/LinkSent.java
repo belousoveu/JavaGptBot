@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024.
+ *
+ */
+
 package org.skypro.be.javagptbot.bot.action;
 
 import lombok.Data;
@@ -44,12 +49,18 @@ public class LinkSent implements BotAction {
         String messageText;
         List<String> questionList = new ArrayList<>();
         dialog.clearMessages();
+        dialog.setQuestions(new HashMap<>());
         try {
             projectFiles = gitHubService.getProjectFiles(link);
             String queryText = TextUtils.convertToString(projectFiles);
             messageText = gigaChatApi.sendPullRequest(TextUtils.getPrompt("task") + "\n" + queryText, dialog);
             dialog.addMessage(new DialogMessage(ASSISTANT_ROLE, messageText));
-            questionList = gigaChatApi.getQuestions(messageText);
+
+            if (gigaChatApi.mockText.equals(messageText)) {
+                questionList = new ArrayList<>();
+            } else {
+                questionList = gigaChatApi.getQuestions(messageText);
+            }
 
         } catch (InvalidPullRequestLinkException | GithubAuthenticationException e) {
             messageText = e.getMessage();

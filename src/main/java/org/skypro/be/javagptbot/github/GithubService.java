@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024.
+ *
+ */
+
 package org.skypro.be.javagptbot.github;
 
 import lombok.extern.slf4j.Slf4j;
@@ -5,6 +10,7 @@ import org.kohsuke.github.*;
 import org.skypro.be.javagptbot.github.exception.GithubAuthenticationException;
 import org.skypro.be.javagptbot.github.exception.InvalidPullRequestLinkException;
 import org.skypro.be.javagptbot.utils.TextUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -14,7 +20,8 @@ import java.util.*;
 @Slf4j
 public class GithubService {
 
-    private final String githubToken = System.getenv("GITHUB_TOKEN");
+    @Value("${github.token}")
+    private String githubToken;
     private String owner;
     private String repo;
     private int pullNumber;

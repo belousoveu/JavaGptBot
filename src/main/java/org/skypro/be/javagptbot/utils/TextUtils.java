@@ -6,11 +6,10 @@
 package org.skypro.be.javagptbot.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -20,9 +19,15 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Slf4j
+@Component
 public class TextUtils {
 
-    public static final String PROMPTS_PATH = "src/main/resources/prompt/";
+//    private final static String PROMPTS_PATH = "src/main/resources/prompt/"; // for local usage
+    private final static String PROMPTS_PATH = "/opt/tgbot/prompt/"; //for usage on server
+
+    public static String getPromptsPath() {
+        return PROMPTS_PATH;
+    }
 
     public static String convertToString(InputStream inputStream) {
         String result = "";
@@ -44,8 +49,18 @@ public class TextUtils {
     public static String getPrompt(String prompt) {
         String fileName = PROMPTS_PATH + prompt + ".txt";
         try {
-            String content = Files.readString(Paths.get(fileName));
-            return content.replace("\\R", " ");
+            File file = new File(fileName);
+
+            StringBuilder content = new StringBuilder();
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    content.append(line).append(" ");
+                }
+            }
+
+            return content.toString().trim();
         } catch (IOException e) {
             log.error(e.getMessage());
         }

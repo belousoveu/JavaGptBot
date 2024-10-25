@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024.
+ *
+ */
+
 package org.skypro.be.javagptbot.bot.action;
 
 import org.skypro.be.javagptbot.bot.UserDialog;
@@ -7,8 +12,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
 public class StartCommand implements BotAction {
-
-    private long userId;
 
     @Override
     public SendMessage getAnswer(UserDialog dialog) {
