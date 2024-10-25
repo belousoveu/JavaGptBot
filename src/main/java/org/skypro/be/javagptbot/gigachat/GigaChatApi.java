@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024.
+ *
+ */
+
 package org.skypro.be.javagptbot.gigachat;
 
 import com.fasterxml.jackson.core.JacksonException;
@@ -46,7 +51,7 @@ public class GigaChatApi {
     }
 
     public String getToken() {
-        if (token != null && tokenExpiration > System.currentTimeMillis() / 1000) {
+        if (token != null && tokenExpiration > System.currentTimeMillis()) {
             return token;
         }
         setToken();
@@ -183,6 +188,6 @@ public class GigaChatApi {
         }
     }
 
-    private final static String mockText = "Не удалось словить ответ от GigaChat!";
+    public final String mockText = "Не удалось словить ответ от GigaChat!";
 
 }

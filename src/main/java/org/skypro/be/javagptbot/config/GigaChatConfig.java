@@ -1,6 +1,12 @@
+/*
+ * Copyright (c) 2024.
+ *
+ */
+
 package org.skypro.be.javagptbot.config;
 
 import okhttp3.OkHttpClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,9 +19,12 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class GigaChatConfig {
 
+    @Value("${giga.chat.authorization.key}")
+    private String gigaChatAuthorizationKey;
+
     @Bean(name = "gigaChatAuthorizationKey")
     public String gigaChatAuthorizationKey() {
-        return System.getenv("GIGACHAT_AUTHORIZATION_KEY");
+        return gigaChatAuthorizationKey;
     }
 
     @Bean(name = "gigaChatKeyScope")

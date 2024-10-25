@@ -1,8 +1,14 @@
+/*
+ * Copyright (c) 2024.
+ *
+ */
+
 package org.skypro.be.javagptbot.bot;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.skypro.be.javagptbot.bot.action.BotAction;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.BotSession;
@@ -26,19 +32,23 @@ import java.util.List;
 @Component
 public class GptBot implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
 
-    private final TelegramClient client;
+    private TelegramClient client;
     private final DialogService dialogService;
     private final DialogManager dialogManager;
+
+    @Value("${bot.token}")
+    private String botToken;
 
 
     public GptBot(DialogService dialogService, DialogManager dialogManager) {
         this.dialogService = dialogService;
         this.dialogManager = dialogManager;
-        this.client = new OkHttpTelegramClient(getBotToken());
+
     }
 
     @PostConstruct
     public void setBotCommands() {
+        this.client = new OkHttpTelegramClient(getBotToken());
         //TODO вынести инициализацию команд в отдельный класс
         List<BotCommand> commands = new ArrayList<>();
         commands.add(new BotCommand("start", "Начало работы с ботом"));
@@ -54,7 +64,7 @@ public class GptBot implements SpringLongPollingBot, LongPollingSingleThreadUpda
 
     @Override
     public String getBotToken() {
-        return String.valueOf(System.getenv("BOT_TOKEN"));
+        return botToken;
     }
 
     @Override

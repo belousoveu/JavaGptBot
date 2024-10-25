@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024.
+ *
+ */
+
 package org.skypro.be.javagptbot.bot;
 
 import org.skypro.be.javagptbot.bot.action.BotAction;
