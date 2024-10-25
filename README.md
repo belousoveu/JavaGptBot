@@ -71,9 +71,10 @@
 
 ### Пример взаимодействия
 
-![photo_2024-10-20_00-22-52](https://github.com/user-attachments/assets/58efdcf5-34d7-420a-b509-f32c683eae1d)
-![photo_2024-10-20_00-22-52 (2)](https://github.com/user-attachments/assets/3006cf5a-6340-436d-b867-43850d87f3a9)
-
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/user-attachments/assets/58efdcf5-34d7-420a-b509-f32c683eae1d" alt="Скриншот 1" width="45%" />
+  <img src="https://github.com/user-attachments/assets/3006cf5a-6340-436d-b867-43850d87f3a9" alt="Скриншот 2" width="45%" />
+</div>
 
 ## Лицензия
 
